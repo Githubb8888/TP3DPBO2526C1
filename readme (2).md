@@ -1,20 +1,8 @@
-# Sistem Data Geografi: Benua – Negara – Kota
+Tugas Praktikum 3 DPBO 2026
 
-Program OOP **C++** & **Python** bertema **Benua/Negara/Kota** dengan konsep **Composition**, **Array of Object**, dan **Hierarchical Inheritance**.
-
----
-
-## 1. Janji
-
-> Saya [NAMA LENGKAP] dengan NIM [NIM] mengerjakan Tugas Praktikum DPBO – Inheritance Lanjutan dalam mata kuliah Desain dan Pemrograman Berorientasi Objek...
-
----
+Janji Saya Bozorov Huseyn (NIM: 2521812) mengerjakan evaluasi Tugas Praktikum 3 dalam mata kuliah Desain dan Pemrograman Berbasis Objek untuk keberkahan-Nya maka saya tidak melakukan kecurangan seperti yang telah dispesifikasikan. Aamiin.
 
 ## 2. Diagram Program
-
-*(Masukkan gambar diagram program di sini jika ada)*
-
----
 
 ## 3. Penjelasan Atribut & Method Kelas
 
