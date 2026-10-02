@@ -48,7 +48,13 @@ Janji Saya Bozorov Huseyn (NIM: 2521812) mengerjakan evaluasi Tugas Praktikum 3 
 
 ---
 
-## 6. Cara Menjalankan
+## 6. Dokumentasi
+1. Screenshot C++ Output  -> cpp1.png & cpp2.png
+2. Screenshot Python Output -> python1.png & python2.png
+3. Screenshot Diagram -> diagram.png
+---
+
+## 7. Cara Menjalankan
 
 **C++**
 ```bash
@@ -60,12 +66,8 @@ g++ -std=c++17 -o geo main.cpp
 **Python**
 ```bash
 cd Python/Program
-python main.py
+python main.py 
 
 ---
 
-## 7. Dokumentasi
-1. Screenshot C++ Output  -> cpp1.png & cpp2.png
-2. Screenshot Python Output -> python1.png & python2.png
-3. Screenshot Diagram -> diagram.png
----
+
