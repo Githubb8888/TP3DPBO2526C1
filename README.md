@@ -1,88 +1,292 @@
-Tugas Praktikum 3 DPBO 2026
+# Sistem Data Geografi: Benua – Negara – Kota
 
-Janji Saya Bozorov Huseyn (NIM: 2521812) mengerjakan evaluasi Tugas Praktikum 3 dalam mata kuliah Desain dan Pemrograman Berbasis Objek untuk keberkahan-Nya maka saya tidak melakukan kecurangan seperti yang telah dispesifikasikan. Aamiin.
+Program OOP bertema **Benua / Negara / Kota** yang dibuat dengan **C++** dan **Python**.
+Konsep utama: **Composition**, **Array of Object**, dan **Hierarchical Inheritance**.
 
-GeoEntity (Abstract Parent Class)
-Base class for all geographical entities. Cannot be instantiated directly.
-Attributes:
-name: string representing the entity name.
-area: double representing total area in square kilometers ($\text{km}^2$).
-population: long or long long representing total population.
+---
 
-Methods:
-getName(), getArea(), getPopulation(): attribute getters.
-getDensity(): calculates population density as population divided by area.
-getType() (Abstract): returns the entity type ("Continent", "Country", or "City").
-describe(indent) (Abstract): prints complete data formatted with hierarchical indentation.
+## 1. Janji
 
-Continent (Child of GeoEntity)
-Attributes:
+> Saya [NAMA LENGKAP] dengan NIM [NIM] mengerjakan Tugas Praktikum DPBO – Inheritance Lanjutan
+> dalam mata kuliah Desain dan Pemrograman Berorientasi Objek untuk keberkahanNya maka saya tidak
+> melakukan kecurangan seperti yang telah dispesifikasikan. Aamiin.
 
-countries: array, vector, or list containing Country objects.
+*(Sesuaikan teks janji dengan format yang diminta asisten/dosen.)*
 
-Methods:
+---
 
-addCountry(...): instantiates a Country inside the Continent and stores it.
-findCountry(name): searches for a country by name.
-getCountries(): returns the list of countries.
-getType(): override that returns "Continent".
-describe(indent): override that prints continent data followed by all its countries.
+## 2. Diagram Program
 
-Country (Child of GeoEntity)
-Attributes:
+```mermaid
+classDiagram
+    direction TB
 
-capital: string representing the capital city name.
-cities: array, vector, or list containing City objects.
+    class GeoEntity {
+        <<abstract>>
+        #string name
+        #double area
+        #long population
+        +getName() string
+        +getArea() double
+        +getPopulation() long
+        +getDensity() double
+        +getType()* string
+        +describe(indent)*
+    }
 
-Methods:
+    class Continent {
+        -List~Country~ countries
+        +addCountry(name, area, population, capital)
+        +findCountry(name) Country
+        +getCountries() List
+        +getType() string
+        +describe(indent)
+    }
 
-addCity(...): instantiates a City inside the Country and stores it.
-findCity(name): searches for a city by name.
-getCities(): returns the list of cities.
-getTotalCityPopulation(): sums up the population of all recorded cities.
-getType(): override that returns "Country".
-describe(indent): override that prints country data followed by all its cities.
+    class Country {
+        -string capital
+        -List~City~ cities
+        +addCity(name, area, population, coastal)
+        +findCity(name) City
+        +getCities() List
+        +getTotalCityPopulation() long
+        +getType() string
+        +describe(indent)
+    }
 
-City (Child of GeoEntity)
+    class City {
+        -bool coastal
+        -List~Landmark~ landmarks
+        +addLandmark(name, type, year)
+        +getType() string
+        +describe(indent)
+    }
 
-Attributes:
+    class Landmark {
+        -string name
+        -string type
+        -int yearBuilt
+        +getName() string
+        +describe(indent)
+    }
 
-coastal: boolean value set to true if it is a coastal city.
-landmarks: array, vector, or list containing Landmark objects.
+    GeoEntity <|-- Continent : inherits
+    GeoEntity <|-- Country : inherits
+    GeoEntity <|-- City : inherits
 
-Methods:
+    Continent "1" *-- "0..*" Country : composition
+    Country "1" *-- "0..*" City : composition
+    City "1" *-- "0..*" Landmark : composition
+```
 
-addLandmark(name, type, year): instantiates a Landmark inside the City.
-getType(): override that returns "City".
-describe(indent): override that prints city data, coastal status, and landmark list.
+Keterangan simbol:
+- Panah segitiga kosong (`<|--`): **inheritance** (is-a)
+- Belah ketupat terisi (`*--`): **composition** (part-of)
+- `*` pada nama method: method abstrak (pure virtual di C++, `@abstractmethod` di Python)
 
-Landmark (Independent Class)
+---
 
-Attributes:
+## 3. Penjelasan Atribut dan Method Setiap Kelas
 
-name: string representing landmark name.
-type: string representing type such as monument, temple, tower, etc.
-yearBuilt: integer representing the year of construction.
+### 3.1 `GeoEntity` (abstract class, parent)
 
-Methods:
+Kelas induk untuk semua entitas geografis. Tidak bisa dibuat objeknya langsung.
 
-getName(): name getter.
-describe(indent): prints a single line of landmark data.
+| Atribut | Tipe | Keterangan |
+|---|---|---|
+| `name` | string | Nama entitas |
+| `area` | double | Luas wilayah (km²) |
+| `population` | long long / int | Jumlah penduduk |
 
-Program Design Rationale
-Program Design Rationale
+| Method | Keterangan |
+|---|---|
+| `getName()`, `getArea()`, `getPopulation()` | Getter atribut |
+| `getDensity()` | Menghitung kepadatan penduduk (`population / area`) |
+| `getType()` *(abstrak)* | Mengembalikan jenis entitas ("Benua", "Negara", "Kota") |
+| `describe(indent)` *(abstrak)* | Mencetak data lengkap, dengan indentasi sesuai level hierarki |
+| `printHeader(indent)` / `_print_header` | Method bantu untuk mencetak baris judul (nama, luas, populasi) |
 
-Hierarchical Inheritance
-A single parent GeoEntity is inherited by three children simultaneously: Continent, Country, and City. Continents, countries, and cities are all geographical entities sharing common traits like name, area, population, and population density calculations, which centralizes attributes to avoid code duplication. Polymorphism is used where each subclass implements its own type and description methods, and in the summary section of main, all objects are grouped into a single GeoEntity collection and handled uniformly. GeoEntity is abstract to prevent instantiation of generic, unclassified geographical entities.
+### 3.2 `Continent` (child dari `GeoEntity`)
 
-Composition
-A three-tier has-a or part-of relationship is modeled where Continent contains Country, Country contains City, and City contains Landmark. Part objects are created directly within the owner methods such as addCountry, addCity, and addLandmark. In C++, parts are stored by value in vectors, ensuring they are destroyed alongside the owner, while in Python parts belong exclusively to the owner instance. Kota is not a country, but a part of a country, making composition the correct relationship rather than inheritance.
+| Atribut | Keterangan |
+|---|---|
+| `countries` | Array/vector/list berisi objek `Country` |
 
-Array of Objects
-Three primary arrays and lists manage internal containment including vector of Country in Continent, vector of City in Country, and vector of Landmark in City. Additionally, main features a polymorphic collection of vector of pointers to const GeoEntity in C++ and a list in Python combining continents, countries, and cities.
+| Method | Keterangan |
+|---|---|
+| `addCountry(...)` | Membuat objek `Country` **di dalam** `Continent` lalu menyimpannya ke array |
+| `findCountry(name)` | Mencari negara berdasarkan nama |
+| `getCountries()` | Mengembalikan daftar negara |
+| `getType()` | Override: mengembalikan "Benua" |
+| `describe(indent)` | Override: mencetak data benua lalu seluruh negara di dalamnya |
 
-Dataset
-Initial Data includes countries Indonesia and Japan, cities Jakarta, Bandung, Surabaya, Tokyo, Osaka, and landmarks Monas, Gedung Sate, Tokyo Tower, Osaka Castle. Additional Data includes country Thailand, cities Yogyakarta, Kyoto, Bangkok, and landmarks Gedung Merdeka in Bandung, Malioboro, Kinkaku-ji, Wat Arun. Data is static and written directly in main with approximate figures for practice purposes.
+### 3.3 `Country` (child dari `GeoEntity`)
 
+| Atribut | Keterangan |
+|---|---|
+| `capital` | Nama ibu kota |
+| `cities` | Array/vector/list berisi objek `City` |
 
+| Method | Keterangan |
+|---|---|
+| `addCity(...)` | Membuat objek `City` **di dalam** `Country` lalu menyimpannya ke array |
+| `findCity(name)` | Mencari kota berdasarkan nama |
+| `getCities()` | Mengembalikan daftar kota |
+| `getTotalCityPopulation()` | Menjumlahkan populasi seluruh kota yang terdata |
+| `getType()` | Override: mengembalikan "Negara" |
+| `describe(indent)` | Override: mencetak data negara lalu seluruh kotanya |
 
+### 3.4 `City` (child dari `GeoEntity`)
+
+| Atribut | Keterangan |
+|---|---|
+| `coastal` | `true` jika kota berada di pesisir |
+| `landmarks` | Array/vector/list berisi objek `Landmark` |
+
+| Method | Keterangan |
+|---|---|
+| `addLandmark(name, type, year)` | Membuat objek `Landmark` **di dalam** `City` |
+| `getType()` | Override: mengembalikan "Kota" |
+| `describe(indent)` | Override: mencetak data kota, status pesisir, dan daftar landmark |
+
+### 3.5 `Landmark` (kelas mandiri, tidak mewarisi apa pun)
+
+| Atribut | Keterangan |
+|---|---|
+| `name` | Nama landmark |
+| `type` | Jenis (monumen, kuil, menara, dll.) |
+| `yearBuilt` | Tahun dibangun |
+
+| Method | Keterangan |
+|---|---|
+| `getName()` | Getter nama |
+| `describe(indent)` | Mencetak satu baris data landmark |
+
+---
+
+## 4. Penjelasan Desain Program
+
+### 4.1 Inheritance yang dipakai: Hierarchical Inheritance
+
+Satu parent `GeoEntity` diwarisi oleh **tiga child** sekaligus: `Continent`, `Country`, dan `City`.
+Ini cocok disebut *hierarchical inheritance* karena beberapa subclass mewarisi dari satu superclass yang sama.
+
+Alasan rasional memakai inheritance di sini:
+- Benua, negara, dan kota **adalah** entitas geografis (hubungan *is-a*) dan sama-sama punya nama, luas, dan populasi.
+- Atribut dan method yang sama (`name`, `area`, `population`, `getDensity()`) cukup ditulis sekali di parent, sehingga tidak ada kode berulang.
+- Setiap child memberi implementasi sendiri untuk `getType()` dan `describe()` (**polimorfisme**). Pada bagian ringkasan di `main`, semua objek dimasukkan ke satu array bertipe `GeoEntity` dan dipanggil dengan cara yang sama.
+
+`GeoEntity` dibuat **abstract** agar tidak ada objek "entitas geografis" yang tidak jelas jenisnya.
+
+### 4.2 Composition yang dipakai
+
+Hubungan *has-a* / *part-of* berlapis tiga tingkat:
+
+| Pemilik (whole) | Bagian (part) | Alasan memakai composition |
+|---|---|---|
+| `Continent` | `Country` | Negara adalah bagian dari benua |
+| `Country` | `City` | Kota adalah bagian dari negara |
+| `City` | `Landmark` | Landmark adalah bagian dari kota |
+
+Ciri composition pada program ini:
+- Objek bagian **dibuat di dalam method pemilik** (`addCountry`, `addCity`, `addLandmark`), bukan dibuat di luar lalu dimasukkan.
+- Di C++, bagian disimpan **by value** di dalam `vector`, jadi ikut hilang ketika pemilik dihancurkan.
+- Di Python, bagian dibuat di dalam pemilik dan tidak dibagikan ke objek lain, sehingga umur objek bagian mengikuti pemiliknya.
+
+Mengapa tidak memakai inheritance di sini? Kota *bukan* sebuah negara, melainkan *bagian dari* negara. Jadi hubungan yang tepat adalah *has-a* (composition), bukan *is-a*.
+
+### 4.3 Array of Object
+
+Tiga array dipakai: `vector<Country>` di `Continent`, `vector<City>` di `Country`, dan `vector<Landmark>` di `City` (di Python berupa `list`). Selain itu, di `main` ada array `vector<const GeoEntity*>` (C++) / `list` (Python) yang berisi campuran benua, negara, dan kota untuk menunjukkan polimorfisme.
+
+### 4.4 Data awal dan data tambahan
+
+| | Data awal (sebelum) | Data ditambahkan (sesudah) |
+|---|---|---|
+| Negara | Indonesia, Jepang | Thailand |
+| Kota | Jakarta, Bandung, Surabaya, Tokyo, Osaka | Yogyakarta, Kyoto, Bangkok |
+| Landmark | Monas, Gedung Sate, Tokyo Tower, Kastil Osaka | Gedung Merdeka (di Bandung), Malioboro, Kinkaku-ji, Wat Arun |
+
+Data bersifat statis (ditulis langsung di `main`). Angka luas dan populasi adalah perkiraan untuk keperluan latihan.
+
+---
+
+## 5. Alur Program (berlaku untuk C++ dan Python)
+
+1. **Buat objek `Continent`** bernama Asia.
+2. **Tambah data awal**:
+   1. Panggil `addCountry` untuk Indonesia dan Jepang.
+   2. Cari tiap negara dengan `findCountry`, lalu `addCity` untuk kota-kotanya.
+   3. Cari tiap kota dengan `findCity`, lalu `addLandmark`.
+3. **Cetak data sebelum penambahan** dengan `asia.describe()`. Method ini memanggil `describe()` negara, yang memanggil `describe()` tiap kota, yang memanggil `describe()` tiap landmark (cetak berjenjang dengan indentasi).
+4. **Tambah data baru**: negara Thailand, kota Yogyakarta, Kyoto, Bangkok, dan beberapa landmark baru.
+5. **Cetak data sesudah penambahan** dengan `asia.describe()` lagi.
+6. **Cetak ringkasan polimorfisme**:
+   1. Kumpulkan benua, semua negara, dan semua kota ke satu array bertipe `GeoEntity`.
+   2. Lewati array itu, panggil `getType()`, `getName()`, `getPopulation()`, `getDensity()` pada tiap elemen, lalu cetak sebagai tabel.
+7. Program selesai.
+
+Catatan C++: pointer hasil `findCountry` / `findCity` dicari ulang setelah menambah elemen, karena `vector` bisa memindahkan isinya di memori ketika ukurannya bertambah.
+
+---
+
+## 6. Cara Menjalankan
+
+**C++**
+```bash
+cd CPP/Program
+g++ -std=c++17 -o geo main.cpp
+./geo            # Windows: geo.exe
+```
+
+**Python**
+```bash
+cd Python/Program
+python main.py
+```
+
+---
+
+## 7. Dokumentasi
+
+Teks hasil eksekusi kedua program identik. Berkas teks lengkap ada di
+`CPP/Dokumentasi/output_cpp.txt` dan `Python/Dokumentasi/output_python.txt`.
+
+### C++
+![Screenshot C++](CPP/Dokumentasi/screenshot_cpp.png)
+
+### Python
+![Screenshot Python](Python/Dokumentasi/screenshot_python.png)
+
+*(Ganti dengan screenshot/screenrecord hasil jalan di komputermu sendiri dan simpan dengan nama file di atas.)*
+
+Cuplikan output (bagian awal):
+
+```text
+==================================================
+        DATA SEBELUM PENAMBAHAN
+==================================================
+[Benua] Asia | Luas: 44579000.0 km2 | Populasi: 4700000000
+  Jumlah negara terdata: 2
+    [Negara] Indonesia | Luas: 1904569.0 km2 | Populasi: 278000000
+      Ibu kota: Jakarta | Jumlah kota terdata: 3 | Total pop. kota terdata: 16000000
+        [Kota] Jakarta | Luas: 662.0 km2 | Populasi: 10600000
+          Kota pesisir: Ya | Landmark: 1
+            - Monas (Monumen, 1975)
+        ...
+```
+
+---
+
+## 8. Struktur Folder
+
+```text
+Project/
+├── README.md
+├── CPP/
+│   ├── Program/        main.cpp
+│   └── Dokumentasi/    output_cpp.txt, screenshot_cpp.png
+└── Python/
+    ├── Program/        main.py
+    └── Dokumentasi/    output_python.txt, screenshot_python.png
+```
