@@ -61,3 +61,11 @@ g++ -std=c++17 -o geo main.cpp
 ```bash
 cd Python/Program
 python main.py
+
+---
+
+## 7. Dokumentasi
+1. Screenshot C++ Output  -> cpp1.png & cpp2.png
+2. Screenshot Python Output -> python1.png & python2.png
+3. Screenshot Diagram -> diagram.png
+---
